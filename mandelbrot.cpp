@@ -49,12 +49,17 @@ double getNormalisedIterations(const u_int & max_depth, const double& escape_rad
 
 class view {
     public:
-        view(int resX, int resY, complex<double> topLeft, complex<double> bottomRight, int maxIterations, double escapeRadius) 
-            : resX(resX), resY(resY), BR(bottomRight), TL(topLeft), maxIterations(maxIterations), escapeRadius(escapeRadius), \
+        view(int resX, int resY, double rotation, complex<double> topLeft, complex<double> bottomRight, int maxIterations, double escapeRadius) 
+            : resX(resX), resY(resY), rotation(std::fmod(rotation, 360)), BR(bottomRight), TL(topLeft), maxIterations(maxIterations), escapeRadius(escapeRadius), \
             xDiv(double(std::real(bottomRight) - std::real(topLeft)) / double(resX)), \
             yDiv(double(std::imag(topLeft) - std::imag(bottomRight)) / double(resY)),
             totalPixels(resX*resY)
-        {}
+        {
+            // how far to the right (real) and down (imag) you need to go to get from TL to BR
+            complex<double> H = bottomRight - topLeft;
+            double tau = 90 - rotation;
+            
+        }
 
         matrix<double> capture();
         matrix<double> parallel_capture();
@@ -62,8 +67,9 @@ class view {
     private:
         void pixel_worker(std::atomic<int>& pixel_counter, std::mutex& pixel_counter_mutex, matrix<double>& img);
 
-        const double xDiv;
-        const double yDiv;
+        complex<double> xDiv;
+        complex<double> yDiv;
+        const double rotation;
         const int resX;
         const int resY;
         const complex<double> TL;
@@ -138,7 +144,7 @@ int main(int argc, char *argv[]) {
     double escapeRadius = 3.1;
 
     // matrix<double> mandelbrot_result = mandelbrot(dimX, dimY, topLeft, bottomRight, maxIterations, escapeRadius);
-    matrix<double> mandelbrot_result = view(resX, resY, topLeft, bottomRight, maxIterations, escapeRadius).parallel_capture();
+    matrix<double> mandelbrot_result = view(resX, resY, 0, topLeft, bottomRight, maxIterations, escapeRadius).parallel_capture();
     matrix<RGBpixel> image{resX, resY, RGBpixel{0,0,0}};
 
     for(int y=0; y<resY; y++){
