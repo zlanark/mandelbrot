@@ -48,9 +48,9 @@ double getNormalisedIterations(const u_int & max_depth, const double& escape_rad
     return iterations - log(log2(abs(z)));
 }
 
-class view {
+class mandelbrot {
     public:
-        view(int resX, int resY, complex<double> topLeft, complex<double> bottomRight, int maxIterations, double escapeRadius) 
+        mandelbrot(int resX, int resY, complex<double> topLeft, complex<double> bottomRight, int maxIterations, double escapeRadius) 
             : resX(resX), resY(resY), BR(bottomRight), TL(topLeft), maxIterations(maxIterations), escapeRadius(escapeRadius), \
             xDiv(double(std::real(bottomRight) - std::real(topLeft)) / double(resX)), \
             yDiv(double(std::imag(topLeft) - std::imag(bottomRight)) / double(resY)), \
@@ -76,7 +76,7 @@ class view {
         const int totalPixels;
 };
 
-matrix<double> view::capture() {
+matrix<double> mandelbrot::capture() {
     matrix<double> img (resX, resY, 0);
     if(real(TL) >= real(BR) || imag(TL) <= imag(BR)) {
         // image has no area (negative dimensions not allowed). Return empty image.
@@ -92,15 +92,15 @@ matrix<double> view::capture() {
     return img;
 }
 
-matrix<double> view::parallel_capture() {
+matrix<double> mandelbrot::parallel_capture() {
     unsigned int numThreads = std::thread::hardware_concurrency();
     numThreads = (numThreads == 0 ? 1 : numThreads);
     const int batchSize = (numThreads > 1 ? this->totalPixels / (4*numThreads) : totalPixels);
 
-    return view::parallel_capture(batchSize);
+    return mandelbrot::parallel_capture(batchSize);
 }
 
-matrix<double> view::parallel_capture(const int batchSize) {
+matrix<double> mandelbrot::parallel_capture(const int batchSize) {
     matrix<double> img (resX, resY, 0);
     if(real(TL) >= real(BR) || imag(TL) <= imag(BR)) {
         // image has no area (negative dimensions not allowed). Return empty image.
@@ -115,13 +115,13 @@ matrix<double> view::parallel_capture(const int batchSize) {
     std::atomic<int> batchCounter = 0;
 
     for(int x=0; x < numThreads; x++){
-        threads.push_back(std::thread(&view::pixel_worker, this, std::ref(batchCounter), std::ref(batchCounterMutex), batchSize, std::ref(img)));
+        threads.push_back(std::thread(&mandelbrot::pixel_worker, this, std::ref(batchCounter), std::ref(batchCounterMutex), batchSize, std::ref(img)));
     }
     for(std::thread& t : threads) t.join();
     return img;
 }
 
-void view::pixel_worker(std::atomic<int>& batchCounter, std::mutex& batchCounterMutex, const int batchSize, matrix<double>& img) {
+void mandelbrot::pixel_worker(std::atomic<int>& batchCounter, std::mutex& batchCounterMutex, const int batchSize, matrix<double>& img) {
     while(true) {
         // Get the next available batch number and increment
         std::unique_lock lock(batchCounterMutex);
@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
     double escapeRadius = 3.1;
 
     // matrix<double> mandelbrot_result = mandelbrot(dimX, dimY, topLeft, bottomRight, maxIterations, escapeRadius);
-    matrix<double> mandelbrot_result = view(resX, resY, topLeft, bottomRight, maxIterations, escapeRadius).parallel_capture(4096);
+    matrix<double> mandelbrot_result = mandelbrot(resX, resY, topLeft, bottomRight, maxIterations, escapeRadius).parallel_capture(4096);
     matrix<RGBpixel> image{resX, resY, RGBpixel{0,0,0}};
 
     for(int y=0; y<resY; y++){
