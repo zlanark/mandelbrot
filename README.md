@@ -8,7 +8,7 @@ For Debian/Ubuntu Linux, these can be installed with:
 `sudo apt install libpng++-dev libc-dev gcc`
 
 ## Build
-Make sure that you have a version of [GCC](https://gcc.gnu.org/) capable of compiling c++17 installed and that `g++` is in your path.
+Make sure that you have a version of [GCC](https://gcc.gnu.org/) capable of compiling C++ 17 installed and that `g++` is in your path.
 ```shell
 cd path/to/source/directory
 make -B
