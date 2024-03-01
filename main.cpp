@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
                 break;
 
             case 's':
-                scale = std::stod(optarg);
+                scale = 1 / std::stod(optarg);
                 break;
 
             case 'a':
