@@ -28,7 +28,6 @@ class mandelbrot {
         matrix<double> parallel_capture(const int batchSize);
 
     private:
-        // void pixel_worker(std::atomic<int>& batchCounter, std::mutex& batchCounterMutex, const int batchSize, matrix<double>& img);
         const double render_pixel(int x, int y) {
             std::array<double, 2> c = camera.pixel2world(x,y);
             return getNormalisedIterations(this->maxIterations, this->escapeRadius, complex<double>{c[0],c[1]});
@@ -77,7 +76,7 @@ double mandelbrot::getNormalisedIterations(const unsigned int& max_depth, const 
     return std::max(0.0, iterations - log(log2(abs(z))));
 }
 
-// single threaded
+/* single threaded */
 matrix<double> mandelbrot::capture() {
     matrix<double> img (camera.resX, camera.resY, 0);
 
