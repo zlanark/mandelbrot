@@ -3,7 +3,7 @@ Simple multi-threaded mandelbrot renderer.
 ## Dependencies
 - [png++](http://savannah.nongnu.org/projects/pngpp/)
 - [GNU C Library](https://sourceware.org/glibc/)
-- [gcc](https://gcc.gnu.org/)
+- [GCC](https://gcc.gnu.org/)
 
 For Debian/Ubuntu Linux, these can be installed with:
 `sudo apt install libpng++-dev libc-dev gcc`
