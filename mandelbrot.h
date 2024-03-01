@@ -7,6 +7,7 @@
 #include <string>
 #include <thread>
 #include <future>
+#include <cmath>
 
 #include "view.h"
 #include "matrix.h"
@@ -73,15 +74,12 @@ double mandelbrot::getNormalisedIterations(const unsigned int& max_depth, const 
     if(iterations == max_depth){
         return -1;
     }
-    return iterations - log(log2(abs(z)));
+    return std::max(0.0, iterations - log(log2(abs(z))));
 }
 
+// single threaded
 matrix<double> mandelbrot::capture() {
     matrix<double> img (camera.resX, camera.resY, 0);
-    // if(real(TL) >= real(BR) || imag(TL) <= imag(BR)) {
-    //     // image has no area (negative dimensions not allowed). Return empty image.
-    //     return img;
-    // }
 
     for(int y=0; y<camera.resY; y++) {
         for(int x=0; x<camera.resX; x++) {
