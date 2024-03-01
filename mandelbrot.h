@@ -100,10 +100,7 @@ matrix<double> mandelbrot::parallel_capture() {
 
 matrix<double> mandelbrot::parallel_capture(const int batchSize) {
     matrix<double> img (camera.resX, camera.resY, 0);
-    // if(real(TL) >= real(BR) || imag(TL) <= imag(BR)) {
-    //     // image has no area (negative dimensions not allowed). Return empty image.
-    //     return img;
-    // }
+
 
     unsigned int numThreads = std::thread::hardware_concurrency();
     numThreads = (numThreads == 0 ? 1 : numThreads);
@@ -119,54 +116,4 @@ matrix<double> mandelbrot::parallel_capture(const int batchSize) {
     for(std::thread& t : threads) t.join();
     return img;
 }
-
-// template<typename I, typename O>
-// matrix<O> parallel_render(const int batchSize, const int numThreads, std::function<I(int, int)> pixel_operation, matrix<I>& inputImg, matrix<O>& outputImg) {
-//     matrix<T> img (camera.resX, camera.resY, 0);
-
-//     unsigned int numThreads = std::thread::hardware_concurrency();
-//     numThreads = (numThreads == 0 ? 1 : numThreads);
-    
-//     std::vector<std::thread> threads;
-//     std::mutex batchCounterMutex;
-//     std::atomic<int> batchCounter = 0;
-
-//     std::function<double(int, int)> pixel_operation = std::bind(&mandelbrot::render_pixel, this, std::placeholders::_1, std::placeholders::_2);
-//     for(int x=0; x < numThreads; x++){
-//         threads.push_back(std::thread(&pixel_worker<double, double>, pixel_operation, std::ref(batchCounter), std::ref(batchCounterMutex), batchSize, std::ref(img), std::ref(img)));
-//     }
-//     for(std::thread& t : threads) t.join();
-//     return img;
-// }
-
-// void mandelbrot::pixel_worker(std::atomic<int>& batchCounter, std::mutex& batchCounterMutex, const int batchSize, matrix<double>& img) {
-//     while(true) {
-//         // Get the next available batch number and increment
-//         std::unique_lock lock(batchCounterMutex);
-//         int batch = batchCounter;
-//         batchCounter++;
-//         lock.unlock();
-
-//         unsigned int numPixels = batchSize;
-//         // Would the last pixel in this batch be outside image bounds?
-//         if((batchCounter+1)*batchSize > camera.totalPixels) {
-//             // By how much?
-//             unsigned int overshoot = (batchCounter+1)*batchSize - camera.totalPixels;
-//             // If we haven't overshot by at least 1 batchSize, then there are still `batchSize - overshoot` pixels unrendered
-//             if(overshoot < batchSize) numPixels = batchSize - overshoot;
-//             else break;
-//         };
-        
-//         unsigned int lowerBound = batch * batchSize;
-//         unsigned int upperBound = lowerBound + numPixels;
-//         // Render each pixel in batch
-//         for(unsigned int pixelCounter=lowerBound; pixelCounter < upperBound; pixelCounter++) {
-//             int x = pixelCounter % camera.resX;
-//             int y = pixelCounter / camera.resX;
-//             std::array<double, 2> c = camera.pixel2world(x,y);
-//             img[y][x] = getNormalisedIterations(this->maxIterations, this->escapeRadius, complex<double>{c[0],c[1]});
-//         }
-//     }
-//     std::this_thread::yield();
-// }
 #endif
