@@ -1,28 +1,19 @@
 .DEFAULT_GOAL := mandelbrot
 
-# For testing png writer
-
-# testwriter:
-# 	g++ -g -Og -c testwriter.cpp `libpng-config --cflags`
-# 	g++ -o testwriter testwriter.o `libpng-config --ldflags`
-# 	rm testwriter.o
-
-# Debug
-
 mandelbrot:
-	g++ -std=c++17 -g -Og -O0 -c main.cpp `libpng-config --cflags`
-	g++ -std=c++17 -o ./bin/mandelbrot main.o `libpng-config --ldflags`
-	rm main.o
+	g++ -std=c++17 -c *.cpp `libpng-config --cflags`
+	g++ -std=c++17 -o ./bin/mandelbrot *.o `libpng-config --ldflags`
+	rm -f  *.o *.gch
 
-# mandelbrot:
-# 	g++ -std=c++17 -c main.cpp `libpng-config --cflags`
-# 	g++ -std=c++17 -o ./bin/mandelbrot main.o `libpng-config --ldflags`
-# 	rm main.o
+debug: clean
+	g++ -std=c++17 -g -Og -O0 -c *.cpp `libpng-config --cflags`
+	g++ -std=c++17 -o ./bin/mandelbrot *.o `libpng-config --ldflags`
+	rm -f  *.o *.gch
 
 all: clean mandelbrot
 
 clean: 
-	rm -f main.o
+	rm -f *.o *.gch
 	rm -f ./bin/mandelbrot
 
 run: ./bin/mandelbrot

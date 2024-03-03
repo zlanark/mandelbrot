@@ -50,11 +50,6 @@ struct RGBpixel {
     u_int8_t B = 0;
 };
 
-std::ostream& operator<<(std::ostream& os, const RGBpixel& pixel){
-    os << std::to_string(pixel.R) << ' ';
-    os << std::to_string(pixel.G) << ' ';
-    os << std::to_string(pixel.B);
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, const RGBpixel& pixel);
 
 #endif

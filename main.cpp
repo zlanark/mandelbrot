@@ -2,10 +2,11 @@
 #include <strstream>
 #include <getopt.h>
 
-#include "mandelbrot.h"
-#include "imgWriter.h"
-#include "render.h"
+#include "mandelbrot.hpp"
+#include "imgWriter.hpp"
+#include "render.hpp"
 #include "constants.hpp"
+#include "view.hpp"
 
 RGBpixel color(int const x, const int y, matrix<double>& img, unsigned int maxIterations){
     double iterations = img[y][x];
@@ -17,7 +18,7 @@ RGBpixel color(int const x, const int y, matrix<double>& img, unsigned int maxIt
 int main(int argc, char *argv[]) {
     double coordX = -0.75;
     double coordY = 0;
-    double angle = 45;
+    double angle = 0;
     double scale = 3;
 
     int resX = 1024;
@@ -25,11 +26,10 @@ int main(int argc, char *argv[]) {
     unsigned int maxIterations = 256;
     double escapeRadius = 3.1;
 
-    std::string output;
+    std::string output = "./mandelbrot.png";
 
     // Parse command line arguments
     int c;
-    int helpFlag;
     while (1) {
         static struct option long_options[] =
         {

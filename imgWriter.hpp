@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "matrix.h"
+#include "matrix.hpp"
 #include <png++/png.hpp>
 
 class imgWriter {

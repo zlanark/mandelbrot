@@ -1,4 +1,6 @@
-Simple multi-threaded mandelbrot renderer.
+
+# Simple multi-threaded mandelbrot renderer.
+![mandelbrot.jpg](./images/mandelbrot.jpg)
 
 ## Dependencies
 - [png++](http://savannah.nongnu.org/projects/pngpp/)

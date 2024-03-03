@@ -2,7 +2,6 @@
 #define VIEW_H
 
 #include <array>
-#include <cmath>
 
 #include "constants.hpp"
 
@@ -21,20 +20,7 @@ struct transform2d {
 };
 
 struct view {
-    view(unsigned int resX, unsigned int resY, transform2d mapping) :
-    resX(resX), resY(resY), totalPixels(resX*resY), mapping(mapping) {
-        std::array<double, 2> offsetRight = getRightOffset();
-        std::array<double, 2> offsetDown = getDownOffset();
-        rightOffsetX = offsetRight[0];
-        rightOffsetY = offsetRight[1];
-        downOffsetX = offsetDown[0];
-        downOffsetY = offsetDown[1];
-        // double worldX = 1*mapping.xScale;
-        // double worldY = 1*mapping.yScale;
-
-
-        // rightOffsetX = worldX * std::cos(mapping.rotation) + worldY * std::sin(mapping.rotation);
-    }
+    view(unsigned int resX, unsigned int resY, transform2d mapping);
 
     unsigned int resX;
     unsigned int resY;
@@ -51,6 +37,8 @@ struct view {
     }
 
     private:
+        std::array<double, 2> getRightOffset();
+        std::array<double, 2> getDownOffset();
         // worldspace X displacement of one pixel to the right 
         double rightOffsetX;
         // worldspace Y displacement of one pixel to the right
@@ -59,20 +47,7 @@ struct view {
         double downOffsetX;
         // worldspace Y displacement of one pixel down
         double downOffsetY;
-
-    std::array<double, 2> getRightOffset() {
-        std::array<double, 2> offset{0,0};
-        offset[0] = mapping.xScale * cos(mapping.rotation);
-        offset[1] = mapping.xScale * sin(mapping.rotation);
-        return offset;
-    }
-    std::array<double, 2> getDownOffset() {
-        std::array<double, 2> offset{0,0};
-        double angle = (mapping.rotation) - (90*(pi/180));
-        offset[0] = mapping.yScale * cos(angle);
-        offset[1] = mapping.yScale * sin(angle);
-        return offset;        
-    }
 };
+
 
 #endif

@@ -1,5 +1,5 @@
-#include "imgWriter.h"
-#include "matrix.h"
+#include "../imgWriter.hpp"
+#include "../matrix.hpp"
 #include <iostream>
 
 

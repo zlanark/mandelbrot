@@ -1,11 +1,11 @@
-#ifndef PIXELWORKER_H
-#define PIXELWORKER_H
+#ifndef RENDER_H
+#define RENDER_H
 
 #include <functional>
 #include <atomic>
 #include <future>
 
-#include "matrix.h"
+#include "matrix.hpp"
 
 // For rendering a matrix from only coordinates
 template <typename T>
