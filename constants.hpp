@@ -8,7 +8,7 @@ constexpr double pi = 3.14159265358979323846;
 const std::string helpText{\
 "Usage: mandelbrot [OPTION]...\n\
 \n\
-Render a mandelbrot set.\n\
+Render an image of the mandelbrot set.\n\
   -x, --width                  The width of the image in pixels.\n\
   -y, --height                 The height of the image in pixels.\n\
   -r, --real                   The real component of the coordinate\n\

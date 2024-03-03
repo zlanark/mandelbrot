@@ -24,7 +24,7 @@ The executable will be at `bin/mandelbrot`.
 ```
 Usage: mandelbrot [OPTION]...
 
-Render a mandelbrot set.
+Render an image of the mandelbrot set.
   -x, --width                  The width of the image in pixels.
   -y, --height                 The height of the image in pixels.
   -r, --real                   The real component of the coordinate
