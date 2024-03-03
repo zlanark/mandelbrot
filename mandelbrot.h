@@ -30,6 +30,7 @@ class mandelbrot {
     private:
         const double render_pixel(int x, int y) {
             std::array<double, 2> c = camera.pixel2world(x,y);
+            // std::array<double, 2> c{x*0.02,y*0.02};
             return getNormalisedIterations(this->maxIterations, this->escapeRadius, complex<double>{c[0],c[1]});
         }
 

@@ -10,7 +10,6 @@ constexpr double pi = 3.14159265358979323846;
 
 RGBpixel color(int const x, const int y, matrix<double>& img, unsigned int maxIterations){
     double iterations = img[y][x];
-    if (y==0 && x==0) std::cout << x << ' ' << y << ": " << img[y][x];
     double factor = std::min(1.0, iterations/maxIterations);
     double blue = sqrt(factor);
     return (iterations < 0 ? RGBpixel{255,255,255} : RGBpixel{u_int8_t(255*sqrt(pow(factor,1.5))),u_int8_t(255*factor),u_int8_t(255*blue)});
@@ -46,10 +45,9 @@ int main(int argc, char *argv[]) {
 
         c = getopt_long(argc, argv, "x:y:r:i:m:e:s:a:", long_options, &option_index);
 
-        // break at end of options
+        // Break at end of options
         if(c == -1) break;
 
-        // Detect the end of the options
         switch (c) {
             case 'x':
                 resX = std::stoi(optarg);

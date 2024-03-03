@@ -14,13 +14,13 @@ void pixel_worker(std::function<T(int, int)> operation, std::atomic<int>& batchC
     while(true) {
         // Get the next available batch number and increment
         std::unique_lock lock(batchCounterMutex);
-        int batch = batchCounter;
+        int currentBatch = batchCounter;
         batchCounter++;
         lock.unlock();
 
         unsigned int numPixels = batchSize;
         // Would the last pixel in this batch be outside image bounds?
-        if((batchCounter+1)*batchSize > totalPixels) {
+        if((currentBatch+1)*batchSize > totalPixels) {
             // By how much?
             unsigned int overshoot = (batchCounter+1)*batchSize - totalPixels;
             // If we haven't overshot by at least 1 batchSize, then there are still `batchSize - overshoot` pixels unrendered
@@ -28,14 +28,14 @@ void pixel_worker(std::function<T(int, int)> operation, std::atomic<int>& batchC
             else break;
         };
         
-        unsigned int lowerBound = batch * batchSize;
+        unsigned int lowerBound = currentBatch * batchSize;
         unsigned int upperBound = lowerBound + numPixels;
         // Render each pixel in batch
         for(unsigned int pixelCounter=lowerBound; pixelCounter < upperBound; pixelCounter++) {
             int x = pixelCounter % img.width;
-            int y = pixelCounter / img.height;
+            int y = pixelCounter / img.width;
 
-            img[y][x] = operation(x, y);
+            img[y][x] = operation(x,y);
         }
     }
     std::this_thread::yield();
@@ -49,13 +49,15 @@ void pixel_worker(std::function<O(int, int, matrix<I>&)> operation, std::atomic<
     while(true) {
         // Get the next available batch number and increment
         std::unique_lock lock(batchCounterMutex);
-        int batch = batchCounter;
+        int currentBatch = batchCounter;
         batchCounter++;
         lock.unlock();
 
         unsigned int numPixels = batchSize;
         // Would the last pixel in this batch be outside image bounds?
-        if((batchCounter+1)*batchSize > totalPixels) {
+        /* !!! This if-statement should only be true once, but it is being entered multiple times 
+        I think I just fixed it: changed batchCounter -> currentBatch in conditional. gotta go */
+        if((currentBatch+1)*batchSize > totalPixels) {
             // By how much?
             unsigned int overshoot = (batchCounter+1)*batchSize - totalPixels;
             // If we haven't overshot by at least 1 batchSize, then there are still `batchSize - overshoot` pixels unrendered
@@ -63,12 +65,12 @@ void pixel_worker(std::function<O(int, int, matrix<I>&)> operation, std::atomic<
             else break;
         };
         
-        unsigned int lowerBound = batch * batchSize;
+        unsigned int lowerBound = currentBatch * batchSize;
         unsigned int upperBound = lowerBound + numPixels;
         // Render each pixel in batch
         for(unsigned int pixelCounter=lowerBound; pixelCounter < upperBound; pixelCounter++) {
             int x = pixelCounter % inputImg.width;
-            int y = pixelCounter / inputImg.height;
+            int y = pixelCounter / inputImg.width;
 
             outputImg[y][x] = operation(x, y, inputImg);
         }
