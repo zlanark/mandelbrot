@@ -5,8 +5,7 @@
 #include "mandelbrot.h"
 #include "imgWriter.h"
 #include "render.h"
-
-constexpr double pi = 3.14159265358979323846;
+#include "constants.hpp"
 
 RGBpixel color(int const x, const int y, matrix<double>& img, unsigned int maxIterations){
     double iterations = img[y][x];
@@ -16,9 +15,9 @@ RGBpixel color(int const x, const int y, matrix<double>& img, unsigned int maxIt
 }
 
 int main(int argc, char *argv[]) {
-    double coordX = -0.7;
+    double coordX = -0.75;
     double coordY = 0;
-    double angle = 0;
+    double angle = 45;
     double scale = 3;
 
     int resX = 1024;
@@ -26,11 +25,15 @@ int main(int argc, char *argv[]) {
     unsigned int maxIterations = 256;
     double escapeRadius = 3.1;
 
+    std::string output;
+
     // Parse command line arguments
     int c;
+    int helpFlag;
     while (1) {
         static struct option long_options[] =
         {
+            {"help", no_argument, 0, 'h'},
             {"width", required_argument, 0, 'x'},
             {"height", required_argument, 0, 'y'},
             {"real", required_argument, 0, 'r'},
@@ -39,16 +42,21 @@ int main(int argc, char *argv[]) {
             {"escape_radius", required_argument, 0, 'e'},
             {"scale", required_argument, 0, 's'},
             {"angle", required_argument, 0, 'a'},
+            {"output", required_argument, 0, 'o'},
             {0, 0, 0, 0}
         }; 
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "x:y:r:i:m:e:s:a:", long_options, &option_index);
+        c = getopt_long(argc, argv, "hx:y:r:i:m:e:s:a:o:", long_options, &option_index);
 
         // Break at end of options
         if(c == -1) break;
 
         switch (c) {
+            case 'h':
+                std::cout << helpText;
+                exit(0);
+
             case 'x':
                 resX = std::stoi(optarg);
                 break;
@@ -81,6 +89,10 @@ int main(int argc, char *argv[]) {
                 angle = std::stod(optarg) * (pi/180);
                 break;
 
+            case 'o':
+                output = optarg;
+                break;
+
             case '?':
                 // error
                 std::cout << "Error parsing arguments\n";
@@ -101,7 +113,8 @@ int main(int argc, char *argv[]) {
     double pixelScaleX = scale/resX;
     double pixelScaleY = pixelScaleX; // 1:1
 
-    transform2d t(angle, pixelScaleX, pixelScaleY, coordX-(pixelScaleX*(resX/2)), coordY+(pixelScaleY*(resY/2)));
+    transform2d t(angle, pixelScaleX, pixelScaleY, coordX, coordY);
+    // transform2d t(angle, pixelScaleX, pixelScaleY, coordX-(pixelScaleX*(resX/2)), coordY+(pixelScaleY*(resY/2)));
     view v(resX, resY, t);
 
     mandelbrot m(v, maxIterations, escapeRadius);
@@ -127,6 +140,6 @@ int main(int argc, char *argv[]) {
     
     // Save image
     imgWriter writer{};
-    writer.write("png", "./mandelbrot.png", image);
+    writer.write("png", output, image);
     return 0;
 }
